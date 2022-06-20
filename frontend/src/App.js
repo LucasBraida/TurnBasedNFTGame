@@ -4,6 +4,7 @@ import './App.css';
 import twitterLogo from './assets/twitter-logo.svg';
 import SelectCharacter from './Components/SelectCharacter/SelectCharacter';
 import Arena from './Components/Arena/Arena';
+import LoadingIndicator from './Components/LoadingIndicator'
 import { CONTRACT_ADDRESS, transformCharacterData } from './constants';
 import myEpicGame from './utils/MyEpicGame.json'
 // Constants
@@ -14,6 +15,7 @@ const App = () => {
   // State
   const [currentAccount, setCurrentAccount] = useState(null);
   const [characterNFT, setCharacterNFT] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Actions
   const checkIfWalletIsConnected = async () => {
@@ -46,6 +48,11 @@ const renderContent = () => {
   /*
    * Scenario #1
    */
+
+  if (isLoading) {
+    return <LoadingIndicator />;
+  }
+
   if (!currentAccount) {
     return (
       <div className="connect-wallet-container">
@@ -101,7 +108,7 @@ const renderContent = () => {
 
   useEffect(() => {
     const checkNetwork = async () => {
-      try { 
+      try {
         if (window.ethereum.networkVersion !== '4') {
           alert("Please connect to Rinkeby!")
         }
@@ -110,6 +117,7 @@ const renderContent = () => {
       }
     }
     checkNetwork()
+    setIsLoading(true)
     checkIfWalletIsConnected();
   }, []);
 
@@ -138,6 +146,7 @@ useEffect(() => {
     } else {
       console.log('No character NFT found');
     }
+    setIsLoading(false)
   };
 
   /*
